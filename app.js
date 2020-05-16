@@ -4,7 +4,8 @@ const express               =        require('express'),
       User                  =        require("./models/user.js"),
       passport              =        require("passport"),
       localStrategy         =        require("passport-local"),
-      passportLocalMongoose =        require("passport-local-mongoose")
+      passportLocalMongoose =        require("passport-local-mongoose"),
+      request               =        require("request")
 
 
 
@@ -58,6 +59,15 @@ app.get('/', (req, res) => {
   });
 app.get("/dashboard", authenticate, (req,res)=>{
     res.render("dashboard.ejs");
+});
+app.post("/dashboard", authenticate, (req, res)=>{
+
+    User.findById(req.user._id, (err, user)=>{
+       
+    })
+
+
+    res.redirect("/dashboard");
 });
 
 app.get("/search", authenticate, (req, res)=>{
