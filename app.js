@@ -21,31 +21,47 @@ app.use(require("express-session")({
 mongoose.connect("mongodb://localhost/div_stock_app", {useNewUrlParser: true, useUnifiedTopology: true});
 
 
-app.use((req, res, next)=>{
+//===================== MIDDLE WARE=======================
 
-    
-    console.log(req.user);
-    res.locals.username = req.user;
-    next();
-    
-});
+
 app.use(bodyParser.urlencoded({extended: true}));
+
+
+
+app.use(require('express-session')({
+    secret: "#$2f32f",
+    resave: false,
+    saveUninitialized: false
+}));
 app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.session({secret: "4hP42F"}));
 passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 
-
-app.get('/', (req, res) => {
-  res.render("landing.ejs");
+//Global Varaibles MiddleWare
+app.use((req, res, next)=>{
+    res.locals.currentUser = req.user;
+    next();
 });
+
+// ===========================================================
+
+
+
 
 
 //=====================WEBSITE ROUTES=======================
-app.get("/dashboard", (req,res)=>{
+app.get('/', (req, res) => {
+    res.render("landing.ejs");
+  });
+app.get("/dashboard", authenticate, (req,res)=>{
     res.render("dashboard.ejs");
+});
+
+app.get("/search", authenticate, (req, res)=>{
+    res.render("search.ejs");
 });
 
 
@@ -82,14 +98,30 @@ app.post("/login", passport.authenticate("local", {
     failureRedirect: "login"
 }));
 
+
+// app.post("/login", passport.authenticate("local"), (req, res)=>{
+//     console.log("In call back function");
+//     console.log(req.user);
+//     res.locals.username = req.user;
+//     res.redirect("/dashboard");
+// });
+
+
 app.post("/login", (req, res)=>{
     console.log(req.user);
 });
 
-app.get("logout", (req, res)=>{
+app.get("/logout", (req, res)=>{
     req.logout();
     res.redirect("/");
-})
+});
+
+function authenticate(req, res, next){
+    if (req.isAuthenticated()){
+        return next();
+    }
+    res.redirect("/login");
+}
 
 
 
