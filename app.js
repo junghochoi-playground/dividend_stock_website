@@ -5,12 +5,11 @@ const express               =        require('express'),
       passport              =        require("passport"),
       localStrategy         =        require("passport-local"),
       passportLocalMongoose =        require("passport-local-mongoose"),
-      request               =        require("request")
+      axios                 =        require("axios");
 
 
 
 
-   
 
 var app = express();
 app.use(require("express-session")({
@@ -60,18 +59,35 @@ app.get('/', (req, res) => {
 app.get("/dashboard", authenticate, (req,res)=>{
     res.render("dashboard.ejs");
 });
-app.post("/dashboard", authenticate, (req, res)=>{
-
-    User.findById(req.user._id, (err, user)=>{
-       
-    })
 
 
-    res.redirect("/dashboard");
-});
 
-app.get("/search", authenticate, (req, res)=>{
-    res.render("search.ejs");
+app.get("/stock", (req, res)=>{
+
+    var ticker = req.query.ticker.toUpperCase();
+
+
+    var finnhuburl = `https://finnhub.io/api/v1/stock/dividend?symbol=${ticker}&from=2010-02-01&to=2020-02-01&token=br02f5vrh5rbiraoee7g`
+    var iexurl = `https://cloud.iexapis.com/stable/stock/${ticker}/stats?token=sk_99cab9ccb73b478faf3bf35989163ae5`
+    
+    axios.get(finnhuburl).then(finnhub =>{
+        axios.get(iexurl).then(iex=>{
+            console.log(iex.data);
+    
+      
+            res.render("stock.ejs", {
+                ticker: ticker,
+                stats: iex.data,
+                dividends: finnhub.data,
+                checkContent: (object) =>{
+                    return object ? object !== null : "N/A";
+                }
+            });
+        });
+    });
+
+
+    
 });
 
 
@@ -108,18 +124,6 @@ app.post("/login", passport.authenticate("local", {
     failureRedirect: "login"
 }));
 
-
-// app.post("/login", passport.authenticate("local"), (req, res)=>{
-//     console.log("In call back function");
-//     console.log(req.user);
-//     res.locals.username = req.user;
-//     res.redirect("/dashboard");
-// });
-
-
-app.post("/login", (req, res)=>{
-    console.log(req.user);
-});
 
 app.get("/logout", (req, res)=>{
     req.logout();

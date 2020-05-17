@@ -1,0 +1,36 @@
+<%- include("partials/header") %> 
+
+
+<div class="ui container">
+
+
+<h1><%= ticker %> </h1>
+ 
+
+
+<li>Dividend Yield - <%= checkContent(stats.dividendYield) %> </li>
+<li>Earnings Per Share - <%=checkContent(stats.ttmEPS)%></li>
+<li>PE Ratio - <%= checkContent(stats.peRatio) %> </li>
+<li>ExDividend Date - <%= checkContent(stats.exDividendDate) %> </li>
+<li>Next Dividend Date - <%= checkContent(stats.nextDividendDate) %> </li>
+
+
+<% if (dividends.length == 0){ %>
+    <p>This company has not paid dividends</p>
+<% } else { %> 
+    <table>
+        <% dividends.forEach((divPayment)=>{ %>
+            <tr>
+                <td><%= divPayment.date %></td>
+                <td><%= divPayment.amount %> </td>
+            </tr>
+        <% });%>
+    </table>
+<% } %> 
+
+
+
+</div>
+
+
+<%- include("partials/footer") %> 
