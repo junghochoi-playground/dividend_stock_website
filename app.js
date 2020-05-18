@@ -6,17 +6,14 @@ const express               =        require('express'),
       localStrategy         =        require("passport-local"),
       passportLocalMongoose =        require("passport-local-mongoose"),
       axios                 =        require("axios");
+      methodOverride        =        require("method-override");
 
 
 
 
 
 var app = express();
-app.use(require("express-session")({
-    secret: "QWERTY",
-    resave: false,
-    saveUninitialized: false
-}));
+
 
 mongoose.connect("mongodb://localhost/div_stock_app", {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -25,6 +22,7 @@ mongoose.connect("mongodb://localhost/div_stock_app", {useNewUrlParser: true, us
 
 
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(methodOverride("_method"));
 
 
 
@@ -43,6 +41,8 @@ passport.deserializeUser(User.deserializeUser());
 //Global Varaibles MiddleWare
 app.use((req, res, next)=>{
     res.locals.currentUser = req.user;
+    
+    // res.locals.currentUser = req.user.portfolio;
     next();
 });
 
@@ -57,39 +57,77 @@ app.get('/', (req, res) => {
     res.render("landing.ejs");
   });
 app.get("/dashboard", authenticate, (req,res)=>{
-    res.render("dashboard.ejs");
+
+    User.findById(req.user._id, (err,user) =>{
+        if(err) return res.send(err);
+        res.render("dashboard.ejs", {portfolio: req.user.portfolio});
+    });
+    
+});
+
+app.post("/dashboard", authenticate, (req, res)=>{
+
+    
+    User.findById(req.user._id, (err,user)=>{
+        if(err) return res.send(err);
+
+        let ticker = req.body.ticker;
+        user.portfolio.push(ticker);
+        user.save();
+        res.redirect("/dashboard");
+
+    });
 });
 
 
 
-app.get("/stock", (req, res)=>{
+app.get("/dashboard/search", (req, res)=>{
+    var ticker = req.query.ticker.toUpperCase().trim();
+    res.redirect(`/dashboard/${ticker}`);
+});
+app.get("/dashboard/:ticker", (req, res)=>{
+    
 
-    var ticker = req.query.ticker.toUpperCase();
-
-
+    let ticker = req.params.ticker;
     var finnhuburl = `https://finnhub.io/api/v1/stock/dividend?symbol=${ticker}&from=2010-02-01&to=2020-02-01&token=br02f5vrh5rbiraoee7g`
     var iexurl = `https://cloud.iexapis.com/stable/stock/${ticker}/stats?token=sk_99cab9ccb73b478faf3bf35989163ae5`
     
-    axios.get(finnhuburl).then(finnhub =>{
-        axios.get(iexurl).then(iex=>{
-            console.log(iex.data);
+    async function callAPI(){
     
+        try{
       
+            const finnhub = await axios.get(finnhuburl);
+            const iex = await axios.get(iexurl);
             res.render("stock.ejs", {
                 ticker: ticker,
                 stats: iex.data,
                 dividends: finnhub.data,
-                checkContent: (object) =>{
-                    return object ? object !== null : "N/A";
-                }
+                contains: req.user.portfolio.includes(ticker),
+                checkContent: object =>{ return object !== null ? object : "N/A";}
             });
-        });
-    });
+        } catch(err){
+      
+            res.send(`${err.response.status} - ${err.response.statusText}`)
+        }
+    }
+    callAPI();
+});
 
+app.delete("/dashboard/:ticker", (req, res)=>{
+    User.findById(req.user._id, (err, user)=>{
+        if (err) return res.send("Error");
+
+        let index = user.portfolio.indexOf(req.params.ticker);
+        if (index == -1) return res.send("error in deleting security from portfolio");
+        user.portfolio.splice(index, 1);
+        user.save();
+
+        res.redirect("/dashboard");
+    });
+    console.log(req.user);
 
     
 });
-
 
 
 

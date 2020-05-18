@@ -4,13 +4,13 @@ const mongoose               =  require('mongoose'),
 
 var userSchema = new mongoose.Schema({
     username: String,
-    password: String,
-    portfolio: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Security"
-        }
-    ]
+    portfolio: [String]
+    // portfolio: [
+    //     {
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         ref: "Security"
+    //     }
+    // ]
 });
 
 

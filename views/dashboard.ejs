@@ -1,3 +1,15 @@
+<!-- 
+
+    Variables open to this EJS Template
+
+    securities - [] array of securities
+
+
+
+ -->
+
+
+
 <%- include("partials/header.ejs") %>
 
 <div class="ui container">
@@ -7,10 +19,22 @@
 </h1>
 
 
-<form action="/stock" method="GET">
+<form action="/dashboard/search" method="GET">
     <input type="text" name="ticker" placeholder="ticker">
     <input type="submit">
 </form>
+
+
+
+
+
+<% portfolio.forEach(ticker =>{ %>
+
+
+    <li><a href="/dashboard/<%= ticker %> "><%= ticker %> </a></li>
+    
+<% }); %>  
+
 
 
 
