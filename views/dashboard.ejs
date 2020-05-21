@@ -11,12 +11,13 @@
 
 
 <%- include("partials/header.ejs") %>
+<%- include("partials/searchbar.ejs") %> 
 
-<div class="ui container">
 
-<h1>
-    Welcome <%= currentUser.username %>! 
-</h1>
+
+<div class="container">
+
+<h1>Welcome <%= currentUser.username %>! </h1>
 
 
 <form action="/dashboard/search" method="GET">
@@ -27,19 +28,20 @@
 
 
 
-
+<table>
 <% portfolio.forEach(ticker =>{ %>
-
-
-    <li><a href="/dashboard/<%= ticker %> "><%= ticker %> </a></li>
-    
+    <tr>
+        <td>
+            <a href="/dashboard/<%= ticker %> "><%= ticker %> </a>
+        </td>
+        <td>
+            <a href="/dashboard/<%= ticker %>/news"><%= ticker %> News</a>
+        </td>
+    </tr>
 <% }); %>  
-
-
-
-
-
+</table>
 </div>
+
  
 
 

@@ -1,0 +1,10 @@
+<%- include("partials/header") %> 
+
+
+<h1>This is the news station</h1>
+
+<% articles.forEach(article =>{ %>
+    <li><a href="<%= article.url%>"><%= article.headline %></a> </li>
+<% }); %> 
+
+<%- include("partials/footer") %> 

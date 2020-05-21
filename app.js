@@ -7,13 +7,14 @@ const express               =        require('express'),
       passportLocalMongoose =        require("passport-local-mongoose"),
       axios                 =        require("axios");
       methodOverride        =        require("method-override");
-
+      dateFormat            =        require("dateformat"); 
+ 
 
 
 
 
 var app = express();
-
+dateFormat.masks.finnhub = "yyyy-mm-dd";
 
 mongoose.connect("mongodb://localhost/div_stock_app", {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -23,7 +24,7 @@ mongoose.connect("mongodb://localhost/div_stock_app", {useNewUrlParser: true, us
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
-
+app.use(express.static(__dirname + "/public"));
 
 
 app.use(require('express-session')({
@@ -87,10 +88,10 @@ app.get("/dashboard/search", (req, res)=>{
 });
 app.get("/dashboard/:ticker", (req, res)=>{
     
-
+    let now = dateFormat(new Date(), "finnhub");
     let ticker = req.params.ticker;
-    var finnhuburl = `https://finnhub.io/api/v1/stock/dividend?symbol=${ticker}&from=2010-02-01&to=2020-02-01&token=br02f5vrh5rbiraoee7g`
-    var iexurl = `https://cloud.iexapis.com/stable/stock/${ticker}/stats?token=sk_99cab9ccb73b478faf3bf35989163ae5`
+    let finnhuburl = `https://finnhub.io/api/v1/stock/dividend?symbol=${ticker}&from=1970-01-01&to=${now}&token=br02f5vrh5rbiraoee7g`
+    let iexurl = `https://cloud.iexapis.com/stable/stock/${ticker}/stats?token=sk_99cab9ccb73b478faf3bf35989163ae5`
     
     async function callAPI(){
     
@@ -102,15 +103,45 @@ app.get("/dashboard/:ticker", (req, res)=>{
                 ticker: ticker,
                 stats: iex.data,
                 dividends: finnhub.data,
-                contains: req.user.portfolio.includes(ticker),
+                loggedIn: req.isAuthenticated(),
+                contains: req.isAuthenticated() ? req.user.portfolio.includes(ticker) :  false,
                 checkContent: object =>{ return object !== null ? object : "N/A";}
             });
         } catch(err){
-      
+            console.log(err);
             res.send(`${err.response.status} - ${err.response.statusText}`)
         }
     }
     callAPI();
+});
+
+app.get("/dashboard/:ticker/news", (req,res)=>{
+
+    async function callAPI(){
+        try{
+            let now = dateFormat(new Date(), "finnhub");
+            let oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate()-2);
+            oneWeekAgo = dateFormat(oneWeekAgo, "finnhub");
+        
+            // twoWeeksAgo = dateFormat(twoWeeksAgo, "finnhub");
+            
+            console.log(now);
+            console.log(oneWeekAgo);
+            
+            let finnhuburl = `https://finnhub.io/api/v1/company-news?symbol=${req.params.ticker}&from=${oneWeekAgo}&to=${now}&token=br02f5vrh5rbiraoee7g`
+
+            const finnhub = await axios.get(finnhuburl);
+            console.log(finnhub);
+            res.render("news.ejs", {articles: finnhub.data });
+        } catch(err){
+            console.log(err);
+            res.send(`${err.response.status} - ${err.response.statusText}`)
+        }   
+    }
+
+    callAPI();
+    
 });
 
 app.delete("/dashboard/:ticker", (req, res)=>{

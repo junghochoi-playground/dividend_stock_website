@@ -1,0 +1,38 @@
+
+.ui.menu{
+   
+    background-color: #0009;
+    box-shadow: none;
+    border-bottom: 0 none !important;
+
+}
+
+.nav-brand{
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.3rem;
+}
+
+div.content{
+    margin-top: 56px;
+}
+
+.vertical-center {
+    min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+    min-height: 100vh; /* These two lines are counted as one :-)       */
+  
+    display: flex;
+    align-items: center;
+  }
+
+
+.intro{
+
+    background-image: url("https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80");
+    background-size: cover;
+}
+
+.information{
+
+    background: black;
+
+}
