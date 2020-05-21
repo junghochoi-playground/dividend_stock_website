@@ -25,11 +25,11 @@
 <% } else{ %>
     <p>Log In to add this stock to  your watchlist</p>
 <% } %> 
-<li>Dividend Yield: <%= checkContent(stats.dividendYield) %> </li>
-<li>Earnings Per Share: <%=checkContent(stats.ttmEPS)%></li>
-<li>PE Ratio: <%= checkContent(stats.peRatio) %> </li>
-<li>ExDividend Date: <%= checkContent(stats.exDividendDate) %> </li>
-<li>Next Dividend Date: <%= checkContent(stats.nextDividendDate) %> </li>
+<li>Dividend Yield: <%= checkContent(companyStats.dividendYield) %> </li>
+<li>Earnings Per Share: <%=checkContent(companyStats.ttmEPS)%></li>
+<li>PE Ratio: <%= checkContent(companyStats.peRatio) %> </li>
+<li>ExDividend Date: <%= checkContent(companyStats.exDividendDate) %> </li>
+<li>Next Dividend Date: <%= checkContent(companyStats.nextDividendDate) %> </li>
 
 
 <% if (dividends.length == 0){ %>

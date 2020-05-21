@@ -14,38 +14,38 @@
 
 
 
-<div class="content rounded">
-    <div class="container ">
 
-        <h1>Welcome <%= currentUser.username %>! </h1>
-        
+<div class="container info-background border-style">
 
-        <%- include("partials/searchbar.ejs") %> 
-        
-        <!-- <form action="/dashboard/search" method="GET">
-            <input type="text" name="ticker" placeholder="ticker">
-            <input type="submit">
-        </form>
-         -->
-        
-        
-        
-        <table>
-        <% portfolio.forEach(ticker =>{ %>
-            <tr>
-                <td>
-                    <a href="/dashboard/<%= ticker %> "><%= ticker %> </a>
-                </td>
-                <td>
-                    <a href="/dashboard/<%= ticker %>/news"><%= ticker %> News</a>
-                </td>
-            </tr>
-        <% }); %>  
-        </table>
-        </div>
-        
+    <h1>Welcome <%= currentUser.username %>! </h1>
+    
 
+    <%- include("partials/searchbar.ejs") %> 
+    
+    <!-- <form action="/dashboard/search" method="GET">
+        <input type="text" name="ticker" placeholder="ticker">
+        <input type="submit">
+    </form>
+        -->
+    
+    
+    
+    <table>
+    <% portfolio.forEach(ticker =>{ %>
+        <tr>
+            <td>
+                <a href="/dashboard/<%= ticker %> "><%= ticker %> </a>
+            </td>
+            <td>
+                <a href="/dashboard/<%= ticker %>/news"><%= ticker %> News</a>
+            </td>
+        </tr>
+    <% }); %>  
+    </table>
 </div>
+    
+
+
 
  
 

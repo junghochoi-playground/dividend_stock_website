@@ -1,5 +1,5 @@
 body{
-    padding-top: 56px;
+    padding-top: 100px;
     background:   
     linear-gradient(
         rgba(0, 0, 0, 0.7), 
@@ -42,13 +42,13 @@ body{
 }
 .content{
     margin: 30px auto;
-    background: rgb(255,255,255, 0.9);
-    width: 90%;
+  
+  
  
 }
 
 .horizontal-center{
-    margin: 10px auto;
+    margin: 0 auto;
 }
 .vertical-center {
     min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
@@ -58,18 +58,28 @@ body{
     align-items: center;
 }
 
+.info-background{
+    background: #b4b4b4e6;
+}
 
-.jumbotron{
-    color: white;
-    background-color: rgba(100, 100, 100, 0.8);
+.border-style{
     border: 1px solid black; 
     box-shadow: 1px 1px 25px 10px black;
+    border-radius: 10px;
+}
+
+.jumbotron{
+    position: relative;
+    bottom: 70px;
+    color: white;
+    background-color: rgba(100, 100, 100, 0.8);
+
 }
 
 .news{
     width: 100vw;
     height: 100vh;
-    background: black;
+    /* background: black; */
 
 }
 

@@ -92,6 +92,7 @@ app.get("/dashboard/:ticker", (req, res)=>{
     let ticker = req.params.ticker;
     let finnhuburl = `https://finnhub.io/api/v1/stock/dividend?symbol=${ticker}&from=1970-01-01&to=${now}&token=br02f5vrh5rbiraoee7g`
     let iexurl = `https://cloud.iexapis.com/stable/stock/${ticker}/stats?token=sk_99cab9ccb73b478faf3bf35989163ae5`
+    let iexurl2 = `https://cloud.iexapis.com/stable/stock/${ticker}/company/stats?token=sk_99cab9ccb73b478faf3bf35989163ae5`
     
     async function callAPI(){
     
@@ -99,9 +100,11 @@ app.get("/dashboard/:ticker", (req, res)=>{
       
             const finnhub = await axios.get(finnhuburl);
             const iex = await axios.get(iexurl);
+            const iex2 = await axios.get(iexurl2);
             res.render("stock.ejs", {
                 ticker: ticker,
-                stats: iex.data,
+                companyDescription: iex2.data,
+                companyStats: iex.data,
                 dividends: finnhub.data,
                 loggedIn: req.isAuthenticated(),
                 contains: req.isAuthenticated() ? req.user.portfolio.includes(ticker) :  false,
