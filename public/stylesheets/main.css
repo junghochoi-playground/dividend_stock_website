@@ -1,3 +1,23 @@
+body{
+    padding-top: 56px;
+    background:   
+    linear-gradient(
+        rgba(0, 0, 0, 0.7), 
+        rgba(0, 0, 0, 0.7)
+      ), url("https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    
+
+    
+}
+.background-img{
+
+}
+.fixed-navbar-fix{
+    
+}
 
 .ui.menu{
    
@@ -7,32 +27,53 @@
 
 }
 
-.nav-brand{
+.bg-dark{
+    background-color: #0003!important;
+}
+
+.navbar-brand{
+    font-size: 1.5rem; 
+}
+
+
+.brand{
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.3rem;
+    
+}
+.content{
+    margin: 30px auto;
+    background: rgb(255,255,255, 0.9);
+    width: 90%;
+ 
 }
 
-div.content{
-    margin-top: 56px;
+.horizontal-center{
+    margin: 10px auto;
 }
-
 .vertical-center {
     min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
     min-height: 100vh; /* These two lines are counted as one :-)       */
   
     display: flex;
     align-items: center;
-  }
-
-
-.intro{
-
-    background-image: url("https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80");
-    background-size: cover;
 }
 
-.information{
 
+.jumbotron{
+    color: white;
+    background-color: rgba(100, 100, 100, 0.8);
+    border: 1px solid black; 
+    box-shadow: 1px 1px 25px 10px black;
+}
+
+.news{
+    width: 100vw;
+    height: 100vh;
     background: black;
 
+}
+
+
+.ticker-search{
+    width: 50%;
 }
