@@ -15,32 +15,55 @@
 
 
 
-<div class="container info-background border-style">
+<div class="info-background border-style">
 
-    <h1>Welcome <%= currentUser.username %>! </h1>
-    
+        
+    <div class="container">
 
-    <%- include("partials/searchbar.ejs") %> 
-    
+        <header>
+            <h1>Welcome <%= currentUser.username %>! </h1>
+            <%- include("partials/searchbar.ejs") %> 
+        </header>
 
-    
-    
-    <table>
-    <% portfolio.forEach(security =>{ %>
-      
-        <tr>
-            <td>
-                <a href="/dashboard/<%= security.symbol %> "><%= security.companyName %> </a>
-            </td>
-            <td>
-                <a href="/dashboard/<%= security.symbol %>/news"><%= security.symbol %> News</a>
-            </td>
-            <td>
-                <%= security.industry %> 
-            </td>
-        </tr>
-    <% }); %>  
-    </table>
+        
+
+        
+        
+        <div class="table-responsive-md">
+        <table class="table table-dark table-striped table-borderless">
+
+        <thead class="thead-dark">
+            <tr>
+                <td>Company Name</td>
+                <td>Stock Symbol</td>
+                <td>News</td>
+                <td>Industry</td>
+            </tr>
+        </thead>
+
+        
+        <tbody>
+        <% portfolio.forEach(security =>{ %>
+        
+            <tr>
+                <td>
+                    <a href="/dashboard/<%= security.symbol %> "><%= security.companyName %> </a>
+                </td>
+                <td>
+                    <%= security.symbol %> 
+                </td>
+                <td>
+                    <a href="/dashboard/<%= security.symbol %>/news"><%= security.symbol %> News</a>
+                </td>
+                <td>
+                    <%= security.industry %> 
+                </td>
+            </tr>
+        <% }); %>  
+        </tbody>
+        </table>
+        </div>
+    </div>
 </div>
     
 

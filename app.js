@@ -133,26 +133,28 @@ app.get("/dashboard/:symbol", (req, res)=>{
       
             const finnhub = (await axios.get(finnhuburl)).data;
             const iex = (await axios.get(iexurl)).data;
-            // const iex2 = (await axios.get(iexurl2)).data;
-            // let iex2 = null;
-         
-            // console.log(await Security.exists({symbol: symbol}));
-            // console.log(await Security.findOne({symbol: symbol}));
-            // console.log(await axios.get(iexurl2).data);
-            console.log(await Security.findOne({symbol: symbol}));
             const iex2 = await Security.exists({symbol: symbol}) ? await Security.findOne({symbol: symbol}) : (await axios.get(iexurl2)).data;
             
+            let contains = false;
+            if (req.isAuthenticated()){
+                await Security.findOne({symbol: symbol}, (err, security)=>{
+                    if (security != null){
+                        contains = req.user.portfolio.includes(security._id);
+                    }  
+                })
+            }
+
             res.render("stock.ejs", {
                 symbol: symbol,
                 companyDescription: iex2,
                 companyStats: iex,
                 dividends: finnhub,
                 loggedIn: req.isAuthenticated(),
-                contains: req.isAuthenticated() ? req.user.portfolio.includes({symbol : symbol}) :  false,
+                contains:  contains, // req.isAuthenticated() ? await req.user.portfolio.includes({symbol : symbol}) :  false,
                 checkContent: object =>{ return object !== null ? object : "N/A";}
             });
         } catch(err){
-            console.log(err);
+            s(err);
             res.send(`${err.response.status} - ${err.response.statusText}`)
         }
     }
@@ -187,8 +189,6 @@ app.get("/dashboard/:symbol/news", (req,res)=>{
 
 app.delete("/dashboard/:symbol", (req, res)=>{
 
-
-    console.log("heloooo");
     User.findById(req.user._id, (err, user)=>{
         if (err) return res.send("User Error");
         Security.findOne({symbol: req.body.symbol}, (err, security)=>{

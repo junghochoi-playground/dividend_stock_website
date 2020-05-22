@@ -12,12 +12,7 @@ body{
 
     
 }
-.background-img{
 
-}
-.fixed-navbar-fix{
-    
-}
 
 .ui.menu{
    
@@ -60,13 +55,10 @@ body{
 
 .info-background{
     background: #b4b4b4e6;
+    margin: 30px 10%;
 }
 
-.border-style{
-    border: 1px solid black; 
-    box-shadow: 1px 1px 25px 10px black;
-    border-radius: 10px;
-}
+
 
 .jumbotron{
     position: relative;
@@ -87,3 +79,13 @@ body{
 .symbol-search{
     width: 50%;
 }
+
+.table-background{
+    background: rgb(224, 224, 224);
+}
+.border-style{
+    border: 1px solid black; 
+    box-shadow: 1px 1px 25px 10px black;
+    border-radius: 10px;
+}
+
