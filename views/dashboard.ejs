@@ -22,23 +22,18 @@
 
     <%- include("partials/searchbar.ejs") %> 
     
-    <!-- <form action="/dashboard/search" method="GET">
-        <input type="text" name="ticker" placeholder="ticker">
-        <input type="submit">
-    </form>
-        -->
-    
+
     
     
     <table>
     <% portfolio.forEach(security =>{ %>
-
+      
         <tr>
             <td>
-                <a href="/dashboard/<%= security.ticker %> "><%= security.company %> </a>
+                <a href="/dashboard/<%= security.symbol %> "><%= security.companyName %> </a>
             </td>
             <td>
-                <a href="/dashboard/<%= security.ticker %>/news"><%= security.ticker %> News</a>
+                <a href="/dashboard/<%= security.symbol %>/news"><%= security.symbol %> News</a>
             </td>
             <td>
                 <%= security.industry %> 

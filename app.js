@@ -72,14 +72,17 @@ app.post("/dashboard", authenticate, (req, res)=>{
 
 
     async function addPortfolio(){
-        let exists = await Security.exists({ticker: req.body.ticker});
 
-       
+
+        //TODO does not work why is req.body.symbol unefined
+        let exists = await Security.exists({symbol:req.body.companyDescription["symbol"]});
+        
+        console.log(`exists = ${exists}`);
         if(!exists){
      
             let security = {
-                ticker: req.body.companyDescription["ticker"],
-                company: req.body.companyDescription["companyName"],
+                symbol: req.body.companyDescription["symbol"],
+                companyName: req.body.companyDescription["companyName"],
                 description: req.body.companyDescription["description"],
                 industry: req.body.companyDescription["industry"],
                 investors:[]
@@ -87,7 +90,7 @@ app.post("/dashboard", authenticate, (req, res)=>{
             await Security.create(security);
         }
 
-        Security.findOne({ticker: req.body.companyDescription["ticker"]}, (err, security)=>{
+        Security.findOne({symbol: req.body.companyDescription["symbol"]}, (err, security)=>{
             User.findById(req.user._id, (err,user)=>{
                 if(err) return res.send(err.message);
                 user.portfolio.push(security._id);
@@ -113,33 +116,39 @@ app.post("/dashboard", authenticate, (req, res)=>{
 
 
 app.get("/dashboard/search", (req, res)=>{
-    var ticker = req.query.ticker.toUpperCase().trim();
-    res.redirect(`/dashboard/${ticker}`);
+    var symbol = req.query.symbol.toUpperCase().trim();
+    res.redirect(`/dashboard/${symbol}`);
 });
-app.get("/dashboard/:ticker", (req, res)=>{
+app.get("/dashboard/:symbol", (req, res)=>{
     
     let now = dateFormat(new Date(), "finnhub");
-    let ticker = req.params.ticker;
-    let finnhuburl = `https://finnhub.io/api/v1/stock/dividend?symbol=${ticker}&from=1970-01-01&to=${now}&token=br02f5vrh5rbiraoee7g`
-    let iexurl = `https://cloud.iexapis.com/stable/stock/${ticker}/stats?token=sk_99cab9ccb73b478faf3bf35989163ae5`
-    let iexurl2 = `https://cloud.iexapis.com/stable/stock/${ticker}/company/stats?token=sk_99cab9ccb73b478faf3bf35989163ae5`
+    let symbol = req.params.symbol;
+    let finnhuburl = `https://finnhub.io/api/v1/stock/dividend?symbol=${symbol}&from=1970-01-01&to=${now}&token=br02f5vrh5rbiraoee7g`
+    let iexurl = `https://cloud.iexapis.com/stable/stock/${symbol}/stats?token=sk_99cab9ccb73b478faf3bf35989163ae5`
+    let iexurl2 = `https://cloud.iexapis.com/stable/stock/${symbol}/company/stats?token=sk_99cab9ccb73b478faf3bf35989163ae5`
     
     async function callAPI(){
     
         try{
       
-            const finnhub = await axios.get(finnhuburl);
-            const iex = await axios.get(iexurl);
-            const iex2 = await axios.get(iexurl2);
+            const finnhub = (await axios.get(finnhuburl)).data;
+            const iex = (await axios.get(iexurl)).data;
+            // const iex2 = (await axios.get(iexurl2)).data;
+            // let iex2 = null;
+         
+            // console.log(await Security.exists({symbol: symbol}));
+            // console.log(await Security.findOne({symbol: symbol}));
+            // console.log(await axios.get(iexurl2).data);
+            console.log(await Security.findOne({symbol: symbol}));
+            const iex2 = await Security.exists({symbol: symbol}) ? await Security.findOne({symbol: symbol}) : (await axios.get(iexurl2)).data;
             
-
             res.render("stock.ejs", {
-                ticker: ticker,
-                companyDescription: iex2.data,
-                companyStats: iex.data,
-                dividends: finnhub.data,
+                symbol: symbol,
+                companyDescription: iex2,
+                companyStats: iex,
+                dividends: finnhub,
                 loggedIn: req.isAuthenticated(),
-                contains: req.isAuthenticated() ? req.user.portfolio.includes({ticker : ticker}) :  false,
+                contains: req.isAuthenticated() ? req.user.portfolio.includes({symbol : symbol}) :  false,
                 checkContent: object =>{ return object !== null ? object : "N/A";}
             });
         } catch(err){
@@ -150,7 +159,7 @@ app.get("/dashboard/:ticker", (req, res)=>{
     callAPI();
 });
 
-app.get("/dashboard/:ticker/news", (req,res)=>{
+app.get("/dashboard/:symbol/news", (req,res)=>{
 
     async function callAPI(){
         try{
@@ -161,7 +170,7 @@ app.get("/dashboard/:ticker/news", (req,res)=>{
         
  
             
-            let finnhuburl = `https://finnhub.io/api/v1/company-news?symbol=${req.params.ticker}&from=${oneWeekAgo}&to=${now}&token=br02f5vrh5rbiraoee7g`
+            let finnhuburl = `https://finnhub.io/api/v1/company-news?symbol=${req.params.symbol}&from=${oneWeekAgo}&to=${now}&token=br02f5vrh5rbiraoee7g`
 
             const finnhub = await axios.get(finnhuburl);
         
@@ -176,13 +185,13 @@ app.get("/dashboard/:ticker/news", (req,res)=>{
     
 });
 
-app.delete("/dashboard/:ticker", (req, res)=>{
+app.delete("/dashboard/:symbol", (req, res)=>{
 
 
     console.log("heloooo");
     User.findById(req.user._id, (err, user)=>{
         if (err) return res.send("User Error");
-        Security.findOne({ticker: req.body.ticker}, (err, security)=>{
+        Security.findOne({symbol: req.body.symbol}, (err, security)=>{
             if (err) return res.send("Error");
             security.investors.remove({_id: req.user.id});
             user.portfolio.remove({_id: security._id});
@@ -194,17 +203,6 @@ app.delete("/dashboard/:ticker", (req, res)=>{
     });
 
 
-    // User.findById(req.user._id, (err, user)=>{
-    //     if (err) return res.send("Error");
-
-    //     let index = user.portfolio.indexOf(req.params.ticker);
-    //     if (index == -1) return res.send("error in deleting security from portfolio");
-    //     user.portfolio.splice(index, 1);
-    //     user.save();
-
-    //     res.redirect("/dashboard");
-    // });
-   
 
     
 });

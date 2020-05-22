@@ -3,8 +3,8 @@ const mongoose =  require('mongoose');
 
 
 let securitySchema = new mongoose.Schema({
-    ticker: String,
-    company: String,
+    symbol: String,
+    companyName: String,
     description: String,
     industry: String,
     investors: [

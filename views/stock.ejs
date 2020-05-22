@@ -5,20 +5,15 @@
 <div class="container">
 
 
-<h1><%= ticker %> </h1>
+<h1><%= symbol %> </h1>
 
-<form action="/dashboard/<%=ticker%>?_method=DELETE" method="POST">
-    <label for="delete">Delete from Portfolio</label>
-    <input type="hidden" name="ticker" value="<%= ticker %>">
-    
-    <input type="submit" id="delete"value="Delete From Portfolio">
-</form>
+
 
 <% if (loggedIn) {%> 
     <% if(contains ) { %> 
-    <form action="/dashboard/<%=ticker%>?_method=DELETE" method="POST">
+    <form action="/dashboard/<%=symbol%>?_method=DELETE" method="POST">
         <label for="delete">Delete from Portfolio</label>
-        <input type="hidden" name="ticker" value="<%= ticker %>">
+        <input type="hidden" name="symbol" value="<%= symbol %>">
         
         <input type="submit" id="delete"value="Delete From Portfolio">
     </form>
@@ -27,7 +22,7 @@
     <form action="/dashboard" method="POST">
         <label for="add">Add to portfolio</label>
         <!-- <input type="hidden" name="companyDescription" value="<%= companyDescription %>"> -->
-        <input type="hidden" name="companyDescription[ticker]" value="<%= ticker %>">
+        <input type="hidden" name="companyDescription[symbol]" value="<%= symbol %>">
         <input type="hidden" name="companyDescription[companyName]" value="<%= companyDescription.companyName %> ">
         <input type="hidden" name="companyDescription[industry]" value="<%= companyDescription.industry %> ">
         <input type="hidden" name="companyDescription[description]" value="<%= companyDescription.description %> ">
@@ -40,8 +35,9 @@
 
 
 
-<li>Description: <%= companyDescription %> </li>
-
+<li>Description: <%= companyDescription.description %> </li>
+<li>CompanyName: <%= companyDescription.companyName %> </li>
+<li>Industry: <%= companyDescription.industry %> </li>
 <li>Dividend Yield: <%= checkContent(companyStats.dividendYield) %> </li>
 <li>Earnings Per Share: <%=checkContent(companyStats.ttmEPS)%></li>
 <li>PE Ratio: <%= checkContent(companyStats.peRatio) %> </li>
