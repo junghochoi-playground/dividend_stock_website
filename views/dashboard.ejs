@@ -31,13 +31,17 @@
     
     
     <table>
-    <% portfolio.forEach(ticker =>{ %>
+    <% portfolio.forEach(security =>{ %>
+
         <tr>
             <td>
-                <a href="/dashboard/<%= ticker %> "><%= ticker %> </a>
+                <a href="/dashboard/<%= security.ticker %> "><%= security.company %> </a>
             </td>
             <td>
-                <a href="/dashboard/<%= ticker %>/news"><%= ticker %> News</a>
+                <a href="/dashboard/<%= security.ticker %>/news"><%= security.ticker %> News</a>
+            </td>
+            <td>
+                <%= security.industry %> 
             </td>
         </tr>
     <% }); %>  

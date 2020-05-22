@@ -7,24 +7,41 @@
 
 <h1><%= ticker %> </h1>
 
+<form action="/dashboard/<%=ticker%>?_method=DELETE" method="POST">
+    <label for="delete">Delete from Portfolio</label>
+    <input type="hidden" name="ticker" value="<%= ticker %>">
+    
+    <input type="submit" id="delete"value="Delete From Portfolio">
+</form>
+
 <% if (loggedIn) {%> 
     <% if(contains ) { %> 
     <form action="/dashboard/<%=ticker%>?_method=DELETE" method="POST">
         <label for="delete">Delete from Portfolio</label>
         <input type="hidden" name="ticker" value="<%= ticker %>">
+        
         <input type="submit" id="delete"value="Delete From Portfolio">
     </form>
 
     <% } else{%> 
     <form action="/dashboard" method="POST">
         <label for="add">Add to portfolio</label>
-        <input type="hidden" name="ticker" value="<%= ticker %>">
+        <!-- <input type="hidden" name="companyDescription" value="<%= companyDescription %>"> -->
+        <input type="hidden" name="companyDescription[ticker]" value="<%= ticker %>">
+        <input type="hidden" name="companyDescription[companyName]" value="<%= companyDescription.companyName %> ">
+        <input type="hidden" name="companyDescription[industry]" value="<%= companyDescription.industry %> ">
+        <input type="hidden" name="companyDescription[description]" value="<%= companyDescription.description %> ">
         <input type="submit" id="add"value="Add to portfolio">
     </form>
     <% } %> 
 <% } else{ %>
     <p>Log In to add this stock to  your watchlist</p>
 <% } %> 
+
+
+
+<li>Description: <%= companyDescription %> </li>
+
 <li>Dividend Yield: <%= checkContent(companyStats.dividendYield) %> </li>
 <li>Earnings Per Share: <%=checkContent(companyStats.ttmEPS)%></li>
 <li>PE Ratio: <%= checkContent(companyStats.peRatio) %> </li>

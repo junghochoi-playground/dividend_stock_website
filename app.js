@@ -2,6 +2,7 @@ const express               =        require('express'),
       mongoose              =        require('mongoose'),
       bodyParser            =        require('body-parser'),
       User                  =        require("./models/user.js"),
+      Security              =        require("./models/security.js"),
       passport              =        require("passport"),
       localStrategy         =        require("passport-local"),
       passportLocalMongoose =        require("passport-local-mongoose"),
@@ -59,25 +60,54 @@ app.get('/', (req, res) => {
   });
 app.get("/dashboard", authenticate, (req,res)=>{
 
-    User.findById(req.user._id, (err,user) =>{
+    User.findById(req.user._id).populate("portfolio").exec((err, user) =>{
         if(err) return res.send(err);
-        res.render("dashboard.ejs", {portfolio: req.user.portfolio});
+ 
+        res.render("dashboard.ejs", {portfolio: user.portfolio});
     });
     
 });
 
 app.post("/dashboard", authenticate, (req, res)=>{
 
-    
-    User.findById(req.user._id, (err,user)=>{
-        if(err) return res.send(err);
 
-        let ticker = req.body.ticker;
-        user.portfolio.push(ticker);
-        user.save();
+    async function addPortfolio(){
+        let exists = await Security.exists({ticker: req.body.ticker});
+
+       
+        if(!exists){
+     
+            let security = {
+                ticker: req.body.companyDescription["ticker"],
+                company: req.body.companyDescription["companyName"],
+                description: req.body.companyDescription["description"],
+                industry: req.body.companyDescription["industry"],
+                investors:[]
+            }
+            await Security.create(security);
+        }
+
+        Security.findOne({ticker: req.body.companyDescription["ticker"]}, (err, security)=>{
+            User.findById(req.user._id, (err,user)=>{
+                if(err) return res.send(err.message);
+                user.portfolio.push(security._id);
+                user.save();
+                security.investors.push(user._id);
+                security.save();
+            
+        
+            });
+        });
         res.redirect("/dashboard");
 
-    });
+    }
+
+
+    addPortfolio();
+
+    
+    
+    
 });
 
 
@@ -101,13 +131,15 @@ app.get("/dashboard/:ticker", (req, res)=>{
             const finnhub = await axios.get(finnhuburl);
             const iex = await axios.get(iexurl);
             const iex2 = await axios.get(iexurl2);
+            
+
             res.render("stock.ejs", {
                 ticker: ticker,
                 companyDescription: iex2.data,
                 companyStats: iex.data,
                 dividends: finnhub.data,
                 loggedIn: req.isAuthenticated(),
-                contains: req.isAuthenticated() ? req.user.portfolio.includes(ticker) :  false,
+                contains: req.isAuthenticated() ? req.user.portfolio.includes({ticker : ticker}) :  false,
                 checkContent: object =>{ return object !== null ? object : "N/A";}
             });
         } catch(err){
@@ -127,15 +159,12 @@ app.get("/dashboard/:ticker/news", (req,res)=>{
             oneWeekAgo.setDate(oneWeekAgo.getDate()-2);
             oneWeekAgo = dateFormat(oneWeekAgo, "finnhub");
         
-            // twoWeeksAgo = dateFormat(twoWeeksAgo, "finnhub");
-            
-            console.log(now);
-            console.log(oneWeekAgo);
+ 
             
             let finnhuburl = `https://finnhub.io/api/v1/company-news?symbol=${req.params.ticker}&from=${oneWeekAgo}&to=${now}&token=br02f5vrh5rbiraoee7g`
 
             const finnhub = await axios.get(finnhuburl);
-            console.log(finnhub);
+        
             res.render("news.ejs", {articles: finnhub.data });
         } catch(err){
             console.log(err);
@@ -148,17 +177,34 @@ app.get("/dashboard/:ticker/news", (req,res)=>{
 });
 
 app.delete("/dashboard/:ticker", (req, res)=>{
+
+
+    console.log("heloooo");
     User.findById(req.user._id, (err, user)=>{
-        if (err) return res.send("Error");
-
-        let index = user.portfolio.indexOf(req.params.ticker);
-        if (index == -1) return res.send("error in deleting security from portfolio");
-        user.portfolio.splice(index, 1);
-        user.save();
-
-        res.redirect("/dashboard");
+        if (err) return res.send("User Error");
+        Security.findOne({ticker: req.body.ticker}, (err, security)=>{
+            if (err) return res.send("Error");
+            security.investors.remove({_id: req.user.id});
+            user.portfolio.remove({_id: security._id});
+            security.save();
+            user.save();
+            res.redirect("/dashboard");
+        });
+        
     });
-    console.log(req.user);
+
+
+    // User.findById(req.user._id, (err, user)=>{
+    //     if (err) return res.send("Error");
+
+    //     let index = user.portfolio.indexOf(req.params.ticker);
+    //     if (index == -1) return res.send("error in deleting security from portfolio");
+    //     user.portfolio.splice(index, 1);
+    //     user.save();
+
+    //     res.redirect("/dashboard");
+    // });
+   
 
     
 });
