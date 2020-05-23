@@ -74,6 +74,20 @@
 
 </nav>
 
+<div class="container">
+    <% if (error && error.length > 0){ %> 
+    <div class="alert alert-danger" rule="alert">
+        <%= error %> 
+    </div>
+    <% } else if (success && success.length > 0) {%> 
+    <div class="alert alert-success" rule="alert">
+        <%= success %> 
+    </div>
+    <% } %> 
+
+</div>
+
+
 
 
 

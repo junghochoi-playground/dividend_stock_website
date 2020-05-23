@@ -8,7 +8,9 @@ const express               =        require('express'),
       passportLocalMongoose =        require("passport-local-mongoose"),
       axios                 =        require("axios");
       methodOverride        =        require("method-override");
-      dateFormat            =        require("dateformat"); 
+      dateFormat            =        require("dateformat");
+      flash                 =        require("connect-flash");
+
  
 
 
@@ -26,7 +28,7 @@ mongoose.connect("mongodb://localhost/div_stock_app", {useNewUrlParser: true, us
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 app.use(express.static(__dirname + "/public"));
-
+app.use(flash());
 
 app.use(require('express-session')({
     secret: "#$2f32f",
@@ -44,7 +46,8 @@ passport.deserializeUser(User.deserializeUser());
 app.use((req, res, next)=>{
     
     res.locals.currentUser = req.user;
-    console.log(req.user);
+    res.locals.error = req.flash("error");
+    res.locals.success= req.flash("success");
     
     // res.locals.currentUser = req.user.portfolio;
     next();
@@ -104,6 +107,7 @@ app.post("/dashboard", authenticate, (req, res)=>{
         
             });
         });
+        req.flash("success", "Added Portfolio Successfully!")
         res.redirect("/dashboard");
 
     }
@@ -157,8 +161,8 @@ app.get("/dashboard/:symbol", (req, res)=>{
                 checkContent: object =>{ return object !== null ? object : "N/A";}
             });
         } catch(err){
-            s(err);
-            res.send(`${err.response.status} - ${err.response.statusText}`)
+            req.flash("error", "Ticker Does not exist")
+            res.redirect("/dashboard");
         }
     }
     callAPI();
@@ -200,6 +204,7 @@ app.delete("/dashboard/:symbol", (req, res)=>{
             user.portfolio.remove({_id: security._id});
             security.save();
             user.save();
+            req.flash("error", "Deleted Stock Successfully");
             res.redirect("/dashboard");
         });
         
@@ -229,6 +234,7 @@ app.post("/register", (req,res)=>{
         if(err) return res.send(err.message);
         
         passport.authenticate("local")(req, res, function(){
+            req.flash("success", "Successfully Signed Up")
             res.redirect("/dashboard");
         });
     });
@@ -240,12 +246,15 @@ app.get("/login", (req, res)=>{
 
 app.post("/login", passport.authenticate("local", {
     successRedirect: "/dashboard",
-    failureRedirect: "login"
+    failureRedirect: "login",
+    successFlash: 'Successfully Logged In',
+    failureFlash: 'Invalid credentials'
 }));
 
 
 app.get("/logout", (req, res)=>{
     req.logout();
+    req.flash("success", "Successfully Logged Out");
     res.redirect("/");
 });
 
@@ -253,13 +262,14 @@ function authenticate(req, res, next){
     if (req.isAuthenticated()){
         return next();
     }
+    req.flash("error", "You must login first");
     res.redirect("/login");
 }
 
 
 
 // =========================================================
-
+// Middle War
 
 
 app.listen(3000, ()=>{

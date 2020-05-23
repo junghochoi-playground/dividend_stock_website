@@ -21,9 +21,17 @@
     <div class="container">
 
         <header>
-            <div class="container">
+            <div class="container d-flex justify-content-center">
                 <h1>Welcome <%= currentUser.username %>! </h1>
-                <%- include("partials/searchbar.ejs") %> 
+                    
+                <form class="form-inline symbol-search  horizontal-center" action="/dashboard/search" method="GET">
+                    <div class=></div>
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="symbol" placeholder="Ticker">
+                    </div>
+                    
+                    <input class="btn btn-large btn-primary" type="submit">
+                </form>
             </div>
 
         </header>
