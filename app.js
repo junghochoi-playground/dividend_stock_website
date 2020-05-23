@@ -42,7 +42,9 @@ passport.deserializeUser(User.deserializeUser());
 
 //Global Varaibles MiddleWare
 app.use((req, res, next)=>{
+    
     res.locals.currentUser = req.user;
+    console.log(req.user);
     
     // res.locals.currentUser = req.user.portfolio;
     next();
@@ -94,8 +96,9 @@ app.post("/dashboard", authenticate, (req, res)=>{
             User.findById(req.user._id, (err,user)=>{
                 if(err) return res.send(err.message);
                 user.portfolio.push(security._id);
-                user.save();
+                
                 security.investors.push(user._id);
+                user.save();
                 security.save();
             
         

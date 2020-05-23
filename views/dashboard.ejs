@@ -21,8 +21,11 @@
     <div class="container">
 
         <header>
-            <h1>Welcome <%= currentUser.username %>! </h1>
-            <%- include("partials/searchbar.ejs") %> 
+            <div class="container">
+                <h1>Welcome <%= currentUser.username %>! </h1>
+                <%- include("partials/searchbar.ejs") %> 
+            </div>
+
         </header>
 
         
