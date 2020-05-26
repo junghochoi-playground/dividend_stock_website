@@ -1,8 +1,10 @@
 <%- include("partials/header") %> 
 
 
+<div class="info-background border-style">
 
 <div class="container">
+
 
 
 <h1><%= symbol %> </h1>
@@ -21,7 +23,8 @@
     <% } else{%> 
     <form action="/dashboard" method="POST">
         <label for="add">Add to portfolio</label>
-        <!-- <input type="hidden" name="companyDescription" value="<%= companyDescription %>"> -->
+        
+
         <input type="hidden" name="companyDescription[symbol]" value="<%= symbol %>">
         <input type="hidden" name="companyDescription[companyName]" value="<%= companyDescription.companyName %> ">
         <input type="hidden" name="companyDescription[industry]" value="<%= companyDescription.industry %> ">
@@ -36,19 +39,53 @@
 
 
 <li>Description: <%= companyDescription.description %> </li>
-<li>CompanyName: <%= companyDescription.companyName %> </li>
-<li>Industry: <%= companyDescription.industry %> </li>
-<li>Dividend Yield: <%= checkContent(companyStats.dividendYield) %> </li>
-<li>Earnings Per Share: <%=checkContent(companyStats.ttmEPS)%></li>
-<li>PE Ratio: <%= checkContent(companyStats.peRatio) %> </li>
-<li>ExDividend Date: <%= checkContent(companyStats.exDividendDate) %> </li>
-<li>Next Dividend Date: <%= checkContent(companyStats.nextDividendDate) %> </li>
+<hr>
+<table class="table table-dark table-borderless">
+    <tr>
+        <td>Company Name</td>
+        <td><%= companyDescription.companyName %> </td>
+    </tr>
+    <tr>
+        <td>Industry:</td>
+        <td><%= companyDescription.industry %> </td>
+    </tr>
+    <tr>
+        <td>Dividend Yield:</td>
+        <td><%=checkContent(companyStats.dividendYield)%></td>
+    </tr>
+    <tr>
+        <td>Earnings Per Share:</td>
+        <td><%=checkContent(companyStats.ttmEPS)%></td>
+    </tr>
+    <tr>
+        <td>PE Ratio: </td>
+        <td> <%= checkContent(companyStats.peRatio) %></td>
+       
+    </tr>
+    <tr>
+        <td>ExDividend Date: </td>
+        <td><%= checkContent(companyStats.exDividendDate) %></td>
+    </tr>
+    <tr>
+        <td>Next Dividend Date: </td>
+        <td><%= checkContent(companyStats.nextDividendDate) %> </td>
+
+    </tr>
+</table>
+
+
+<div class="col-sm-12" style="width:100%"> 
+    <div id="chart"></div>
+</div>
 
 
 <% if (dividends.length == 0){ %>
     <p>This company has not paid dividends</p>
 <% } else { %> 
-    <table>
+    <div>
+    
+    
+    <table class="table px-5">
         <% dividends.forEach((divPayment)=>{ %>
             <tr>
                 <td><%= divPayment.date %></td>
@@ -61,6 +98,42 @@
 
 
 </div>
+</div>
 
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+    
+    var divData = <%- JSON.stringify(dividends) %>;
+    var formatData = [["Date", "Amount"]];
+
+  
+    divData.reverse().forEach(element => {
+        formatData.push([element.date, element.amount]);
+    });
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart(){
+       
+        if (divData.length == 0) return;
+        var data = google.visualization.arrayToDataTable(formatData);
+        var options = {
+          title: 'Dividend Payments',
+        
+          legend: { position: 'bottom' },
+          width:'auto',
+          height: 'auto'
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart'));
+        chart.draw(data, options);
+        console.log(chartData);
+    }   
+    $(window).resize(function(){
+        drawChart();
+    });
+
+</script>
+<!-- <script type="text/javascript" src="../scripts/chart.js"></script> -->
 
 <%- include("partials/footer") %> 

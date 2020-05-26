@@ -1,10 +1,45 @@
 <%- include("partials/header") %> 
 
 
-<h1>This is the news station</h1>
 
-<% articles.forEach(article =>{ %>
-    <li><a href="<%= article.url%>"><%= article.headline %></a> </li>
-<% }); %> 
+<div class="info-background border-style">
+<div class="container">
+    <h1>This is the news station</h1>
+
+    <div class="container news-background">
+        <% articles.forEach(article =>{ %>
+            <div class="row mt-2 article">
+                <div class="col-lg-4">
+                    <img src="<%= article.image %> " class="img-fluid">
+                </div>
+                <div class="col-lg-4">
+                    <a href="<%= article.url%>"><%= article.headline %></a>
+                </div>
+                <div class="col-lg-4">
+                    <%= article.datetime %> 
+                </div>  
+
+            </div>
+
+<!--         
+            <div class="article d-flex  align-items-center">
+                <div class="news-part">
+                    
+                </div>  
+                <div>
+                </div>
+                <div>
+                  
+                </div>
+                <hr>
+            </div> -->
+            
+        <% }); %>
+    </div>
+ 
+
+
+</div>
+</div>
 
 <%- include("partials/footer") %> 

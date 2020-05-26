@@ -61,12 +61,7 @@ body{
 
 }
 
-.news{
-    width: 100vw;
-    height: 100vh;
-    /* background: black; */
 
-}
 
 
 .symbol-search{
@@ -82,3 +77,18 @@ body{
     border-radius: 10px;
 }
 
+.news a {
+    color: black;
+}
+
+.news-background{
+    background: white;
+    padding: 30px;
+}
+
+.article a {
+    font-size: 1.3rem;
+}
+.news-part {
+    margin-right: 30px
+}
