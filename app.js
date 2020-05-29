@@ -21,7 +21,7 @@ dateFormat.masks.finnhub = "yyyy-mm-dd";
 // const localConnection = "mongodb://localhost/div_stock_app";
 const connection = "mongodb+srv://dchoi315:315choi2002@divstockusers-ctwtg.mongodb.net/test?retryWrites=true&w=majority";
 mongoose.connect(connection, {
-    useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true;
+    useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true
 }).then(()=>{
     console.log("Connected to DB");
 }).catch(err =>{
