@@ -18,8 +18,15 @@ const express               =        require('express'),
 
 var app = express();
 dateFormat.masks.finnhub = "yyyy-mm-dd";
-
-mongoose.connect("mongodb://localhost/div_stock_app", {useNewUrlParser: true, useUnifiedTopology: true});
+const localConnection = "mongodb://localhost/div_stock_app";
+const connection = "mongodb+srv://dchoi315:315choi2002@divstockusers-ctwtg.mongodb.net/test?retryWrites=true&w=majority";
+mongoose.connect(connection, {
+    useNewUrlParser: true, useUnifiedTopology: true
+}).then(()=>{
+    console.log("Connected to DB");
+}).catch(err =>{
+    console.log("ERROR: ", err.message);
+});
 
 
 //===================== MIDDLE WARE=======================
@@ -105,10 +112,11 @@ app.post("/dashboard", authenticate, (req, res)=>{
                 security.save();
             
         
+                req.flash("success", "Added Portfolio Successfully!")
+                res.redirect("/dashboard");
             });
         });
-        req.flash("success", "Added Portfolio Successfully!")
-        res.redirect("/dashboard");
+
 
     }
 
