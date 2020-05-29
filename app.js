@@ -82,7 +82,7 @@ app.post("/dashboard", authenticate, (req, res)=>{
         //TODO does not work why is req.body.symbol unefined
         let exists = await Security.exists({symbol:req.body.companyDescription["symbol"]});
         
-        console.log(`exists = ${exists}`);
+  
         if(!exists){
      
             let security = {
@@ -182,7 +182,7 @@ app.get("/dashboard/:symbol/news", (req,res)=>{
             let finnhuburl = `https://finnhub.io/api/v1/company-news?symbol=${req.params.symbol}&from=${oneWeekAgo}&to=${now}&token=br02f5vrh5rbiraoee7g`
 
             const finnhub = await axios.get(finnhuburl);
-            console.log(finnhub.data);
+          
             res.render("news.ejs", {articles: finnhub.data });
         } catch(err){
             console.log(err);
