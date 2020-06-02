@@ -138,7 +138,7 @@ app.get("/dashboard/:symbol", (req, res)=>{
     
     let now = dateFormat(new Date(), "finnhub");
     let symbol = req.params.symbol;
-    let finnhuburl = `https://finnhub.io/api/v1/stock/dividend?symbol=${symbol}&from=1970-01-01&to=${now}&token=br02f5vrh5rbiraoee7g`
+    let finnhuburl = `https://finnhub.io/api/v1/stock/dividend?symbol=${symbol}&from=1970-01-01&to=${now}&token=brar0a7rh5rbo6o6sgpg`
     let iexurl = `https://cloud.iexapis.com/stable/stock/${symbol}/stats?token=sk_99cab9ccb73b478faf3bf35989163ae5`
     let iexurl2 = `https://cloud.iexapis.com/stable/stock/${symbol}/company/stats?token=sk_99cab9ccb73b478faf3bf35989163ae5`
     
@@ -149,7 +149,7 @@ app.get("/dashboard/:symbol", (req, res)=>{
             const finnhub = (await axios.get(finnhuburl)).data;
             const iex = (await axios.get(iexurl)).data;
             const iex2 = await Security.exists({symbol: symbol}) ? await Security.findOne({symbol: symbol}) : (await axios.get(iexurl2)).data;
-            
+
             let contains = false;
             if (req.isAuthenticated()){
                 await Security.findOne({symbol: symbol}, (err, security)=>{
@@ -158,7 +158,7 @@ app.get("/dashboard/:symbol", (req, res)=>{
                     }  
                 })
             }
-
+            console.log(finnhub);
             res.render("stock.ejs", {
                 symbol: symbol,
                 companyDescription: iex2,

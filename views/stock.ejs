@@ -77,66 +77,6 @@
 </table>
 
 
-<div class="col-sm-12" style="width:100%"> 
-    <div id="chart"></div>
-</div>
 
-
-<% if (dividends.length == 0){ %>
-    <p>This company has not paid dividends</p>
-<% } else { %> 
-    <div>
-    
-    
-    <table class="table px-5">
-        <% dividends.forEach((divPayment)=>{ %>
-            <tr>
-                <td><%= divPayment.date %></td>
-                <td><%= divPayment.amount %> </td>
-            </tr>
-        <% });%>
-    </table>
-<% } %> 
-
-
-
-</div>
-</div>
-
-
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script>
-    
-    var divData = <%- JSON.stringify(dividends) %>;
-    var formatData = [["Date", "Amount"]];
-
-  
-    divData.reverse().forEach(element => {
-        formatData.push([element.date, element.amount]);
-    });
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
-    function drawChart(){
-       
-        if (divData.length == 0) return;
-        var data = google.visualization.arrayToDataTable(formatData);
-        var options = {
-          title: 'Dividend Payments',
-        
-          legend: { position: 'bottom' },
-          width:'auto',
-          height: 'auto'
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('chart'));
-        chart.draw(data, options);
-        console.log(chartData);
-    }   
-    $(window).resize(function(){
-        drawChart();
-    });
-
-</script>
-<!-- <script type="text/javascript" src="../scripts/chart.js"></script> -->
 
 <%- include("partials/footer") %> 
