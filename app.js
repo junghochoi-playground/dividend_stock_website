@@ -19,6 +19,8 @@ const express               =        require('express'),
 var app = express();
 dateFormat.masks.finnhub = "yyyy-mm-dd";
 // const localConnection = "mongodb://localhost/div_stock_app";
+const finnhubAPIKey = "brc20m7rh5rb7je31dq0";
+const iexAPIKey = "sk_99cab9ccb73b478faf3bf35989163ae5"
 const connection = "mongodb+srv://dchoi315:315choi2002@divstockusers-ctwtg.mongodb.net/test?retryWrites=true&w=majority";
 mongoose.connect(connection, {
     useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true
@@ -138,9 +140,9 @@ app.get("/dashboard/:symbol", (req, res)=>{
     
     let now = dateFormat(new Date(), "finnhub");
     let symbol = req.params.symbol;
-    let finnhuburl = `https://finnhub.io/api/v1/stock/dividend?symbol=${symbol}&from=1970-01-01&to=${now}&token=brar0a7rh5rbo6o6sgpg`
-    let iexurl = `https://cloud.iexapis.com/stable/stock/${symbol}/stats?token=sk_99cab9ccb73b478faf3bf35989163ae5`
-    let iexurl2 = `https://cloud.iexapis.com/stable/stock/${symbol}/company/stats?token=sk_99cab9ccb73b478faf3bf35989163ae5`
+    let finnhuburl = `https://finnhub.io/api/v1/stock/dividend?symbol=${symbol}&from=1970-01-01&to=${now}&token=${finnhubAPIKey}`
+    let iexurl = `https://cloud.iexapis.com/stable/stock/${symbol}/stats?token=${iexAPIKey}`
+    let iexurl2 = `https://cloud.iexapis.com/stable/stock/${symbol}/company/stats?token=${iexAPIKey}`
     
     async function callAPI(){
     
@@ -187,10 +189,9 @@ app.get("/dashboard/:symbol/news", (req,res)=>{
         
  
             
-            let finnhuburl = `https://finnhub.io/api/v1/company-news?symbol=${req.params.symbol}&from=${oneWeekAgo}&to=${now}&token=br02f5vrh5rbiraoee7g`
-
+            let finnhuburl = `https://finnhub.io/api/v1/company-news?symbol=${req.params.symbol}&from=${oneWeekAgo}&to=${now}&token=${finnhubAPIKey}`
             const finnhub = await axios.get(finnhuburl);
-          
+        
             res.render("news.ejs", {articles: finnhub.data });
         } catch(err){
             console.log(err);
