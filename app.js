@@ -1,3 +1,9 @@
+
+
+
+// ===================== DEPENDENCIES ===================== 
+
+
 const express               =        require('express'),
       mongoose              =        require('mongoose'),
       bodyParser            =        require('body-parser'),
@@ -11,17 +17,17 @@ const express               =        require('express'),
       dateFormat            =        require("dateformat");
       flash                 =        require("connect-flash");
 
- 
+//===========================================================
 
 
 
 
 var app = express();
 dateFormat.masks.finnhub = "yyyy-mm-dd";
-// const localConnection = "mongodb://localhost/div_stock_app";
 const finnhubAPIKey = "brc20m7rh5rb7je31dq0";
 const iexAPIKey = "sk_99cab9ccb73b478faf3bf35989163ae5"
 const connection = "mongodb+srv://dchoi315:315choi2002@divstockusers-ctwtg.mongodb.net/test?retryWrites=true&w=majority";
+
 mongoose.connect(connection, {
     useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true
 }).then(()=>{
@@ -69,17 +75,17 @@ app.use((req, res, next)=>{
 
 
 //=====================WEBSITE ROUTES=======================
+
 app.get('/', (req, res) => {
     res.render("landing.ejs");
-  });
-app.get("/dashboard", authenticate, (req,res)=>{
+});
 
+
+app.get("/dashboard", authenticate, (req,res)=>{
     User.findById(req.user._id).populate("portfolio").exec((err, user) =>{
-        if(err) return res.send(err);
- 
+        if(err) return res.send(err); 
         res.render("dashboard.ejs", {portfolio: user.portfolio});
     });
-    
 });
 
 app.post("/dashboard", authenticate, (req, res)=>{
@@ -122,12 +128,8 @@ app.post("/dashboard", authenticate, (req, res)=>{
 
     }
 
-
     addPortfolio();
 
-    
-    
-    
 });
 
 
@@ -136,6 +138,8 @@ app.get("/dashboard/search", (req, res)=>{
     var symbol = req.query.symbol.toUpperCase().trim();
     res.redirect(`/dashboard/${symbol}`);
 });
+
+
 app.get("/dashboard/:symbol", (req, res)=>{
     
     let now = dateFormat(new Date(), "finnhub");
@@ -200,11 +204,10 @@ app.get("/dashboard/:symbol/news", (req,res)=>{
     }
 
     callAPI();
-    
+
 });
 
 app.delete("/dashboard/:symbol", (req, res)=>{
-
     User.findById(req.user._id, (err, user)=>{
         if (err) return res.send("User Error");
         Security.findOne({symbol: req.body.symbol}, (err, security)=>{
@@ -215,18 +218,12 @@ app.delete("/dashboard/:symbol", (req, res)=>{
             user.save();
             req.flash("error", "Deleted Stock Successfully");
             res.redirect("/dashboard");
-        });
-        
-    });
-
-
-
-    
+        }); 
+    }); 
 });
-
-
-
 //=========================================================
+
+
 
 
 // ====================== AUTH ROUTES ======================
@@ -278,7 +275,13 @@ function authenticate(req, res, next){
 
 
 // =========================================================
-// Middle War
+
+
+
+
+
+
+// START SERVER
 
 
 app.listen(process.env.PORT ||3000, ()=>{
