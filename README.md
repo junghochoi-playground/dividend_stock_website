@@ -1,5 +1,5 @@
 # Dividend Stock Website
-Web Application to create stock portfolios, review quantitative stock performance, and company news.
+Web Application to create stock portfolios, review quantitative stock performance, and company news. You can create an account and keep track of your favorite companies by searching up ticker symbols and adding them to your portfolio
 
 ## What I Learned
 
